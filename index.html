@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prueba Parcial 1 — Metodología de la Investigación</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+--bg:#0f0f14;--surface:#1a1a24;--surface2:#22222e;--border:#2a2a3a;
+--red:#e63946;--red-glow:rgba(230,57,70,.15);--red-soft:#ff6b7a;
+--text:#e8e6e3;--text-muted:#8a8a9a;--text-dim:#55556a;
+--green:#2ecc71;--green-glow:rgba(46,204,113,.15);
+--gold:#f1c40f;--blue:#3498db;
+}
+html{scroll-behavior:smooth}
+body{font-family:'Space Grotesk',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+body::before{content:'';position:fixed;top:0;left:0;right:0;bottom:0;background:radial-gradient(ellipse at 20% 0%,rgba(230,57,70,.06) 0%,transparent 50%),radial-gradient(ellipse at 80% 100%,rgba(52,152,219,.04) 0%,transparent 50%);pointer-events:none;z-index:0}
+
+.container{max-width:720px;margin:0 auto;padding:1.5rem;position:relative;z-index:1}
+
+/* HEADER */
+.header{text-align:center;padding:2rem 0 1.5rem;border-bottom:1px solid var(--border);margin-bottom:2rem}
+.header .badge{display:inline-block;padding:.3rem .8rem;background:var(--red-glow);border:1px solid rgba(230,57,70,.3);border-radius:2rem;font-size:.7rem;color:var(--red-soft);letter-spacing:.1em;text-transform:uppercase;margin-bottom:1rem}
+.header h1{font-size:1.6rem;font-weight:700;line-height:1.3;margin-bottom:.5rem;background:linear-gradient(135deg,var(--text) 0%,var(--red-soft) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.header p{color:var(--text-muted);font-size:.85rem}
+.header .inst{font-family:'Noto Sans JP',sans-serif;font-size:.7rem;color:var(--text-dim);margin-top:.5rem;letter-spacing:.05em}
+
+/* TIMER */
+.timer-bar{position:sticky;top:0;z-index:100;background:var(--bg);border-bottom:1px solid var(--border);padding:.6rem 0;backdrop-filter:blur(12px)}
+.timer-inner{max-width:720px;margin:0 auto;padding:0 1.5rem;display:flex;justify-content:space-between;align-items:center}
+.timer-text{font-size:.8rem;color:var(--text-muted)}
+.timer-text span{font-weight:700;color:var(--text);font-variant-numeric:tabular-nums;font-size:.95rem}
+.timer-text span.warn{color:var(--red)}
+.progress-track{flex:1;height:3px;background:var(--border);border-radius:2px;margin:0 1rem}
+.progress-fill{height:100%;background:var(--red);border-radius:2px;transition:width .3s}
+
+/* INTRO SCREEN */
+.screen{display:none;animation:fadeIn .4s ease}
+.screen.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+.intro-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:2rem;margin-top:1rem}
+.intro-card h2{font-size:1.1rem;margin-bottom:1rem;color:var(--red-soft)}
+.intro-card ul{list-style:none;padding:0}
+.intro-card li{padding:.5rem 0;color:var(--text-muted);font-size:.85rem;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:.5rem}
+.intro-card li::before{content:'→';color:var(--red);font-weight:700}
+.intro-card li:last-child{border:none}
+
+.input-group{margin-top:1.5rem}
+.input-group label{display:block;font-size:.75rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.5rem}
+.input-group input{width:100%;padding:.8rem 1rem;background:var(--bg);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:inherit;font-size:.95rem;transition:border .2s}
+.input-group input:focus{outline:none;border-color:var(--red);box-shadow:0 0 0 3px var(--red-glow)}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.5rem;padding:.8rem 2rem;border:none;border-radius:8px;font-family:inherit;font-size:.9rem;font-weight:600;cursor:pointer;transition:all .2s;text-decoration:none}
+.btn-primary{background:var(--red);color:#fff;width:100%;margin-top:1.5rem}
+.btn-primary:hover{background:#d32f3f;transform:translateY(-1px);box-shadow:0 4px 20px var(--red-glow)}
+.btn-primary:disabled{opacity:.4;cursor:not-allowed;transform:none;box-shadow:none}
+.btn-secondary{background:var(--surface2);color:var(--text);border:1px solid var(--border)}
+.btn-secondary:hover{background:var(--border)}
+.btn-sm{padding:.5rem 1rem;font-size:.8rem}
+.btn-whatsapp{background:#25D366;color:#fff}
+.btn-whatsapp:hover{background:#1ebe5a}
+
+/* QUESTIONS */
+.question-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.5rem;margin-bottom:1.2rem;transition:border .2s}
+.question-card.answered{border-color:rgba(230,57,70,.3)}
+.question-num{font-size:.7rem;color:var(--red);text-transform:uppercase;letter-spacing:.15em;font-weight:600;margin-bottom:.6rem}
+.question-text{font-size:.95rem;line-height:1.6;margin-bottom:1.2rem;font-weight:500}
+
+.options{display:flex;flex-direction:column;gap:.5rem}
+.option{position:relative;display:flex;align-items:flex-start;gap:.7rem;padding:.7rem .9rem;background:var(--bg);border:1px solid var(--border);border-radius:8px;cursor:pointer;transition:all .15s;font-size:.88rem;line-height:1.5;color:var(--text-muted)}
+.option:hover{border-color:var(--red);background:var(--red-glow)}
+.option.selected{border-color:var(--red);background:var(--red-glow);color:var(--text)}
+.option input{display:none}
+.option .radio{width:18px;height:18px;min-width:18px;border-radius:50%;border:2px solid var(--border);margin-top:2px;display:flex;align-items:center;justify-content:center;transition:all .15s}
+.option.selected .radio{border-color:var(--red);background:var(--red)}
+.option.selected .radio::after{content:'';width:6px;height:6px;background:#fff;border-radius:50%}
+
+/* RESULTS */
+.result-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:2rem;text-align:center;margin-bottom:1.5rem}
+.score-circle{width:120px;height:120px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;margin:0 auto 1.2rem;border:3px solid var(--red);position:relative}
+.score-circle::before{content:'';position:absolute;inset:-6px;border-radius:50%;border:1px solid var(--red-glow)}
+.score-num{font-size:2.2rem;font-weight:700;line-height:1}
+.score-label{font-size:.7rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:.1em;margin-top:.2rem}
+.score-msg{font-size:1rem;margin-bottom:.3rem;font-weight:600}
+.score-detail{font-size:.8rem;color:var(--text-muted)}
+
+.result-actions{display:flex;gap:.8rem;margin-top:1.5rem;flex-wrap:wrap}
+.result-actions .btn{flex:1;min-width:140px}
+
+.review-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.2rem;margin-bottom:.8rem}
+.review-card.correct{border-left:3px solid var(--green)}
+.review-card.incorrect{border-left:3px solid var(--red)}
+.review-status{font-size:.7rem;font-weight:600;text-transform:uppercase;letter-spacing:.1em;margin-bottom:.4rem}
+.review-status.correct{color:var(--green)}
+.review-status.incorrect{color:var(--red)}
+.review-q{font-size:.85rem;margin-bottom:.4rem;font-weight:500}
+.review-a{font-size:.8rem;color:var(--text-muted)}
+.review-a span{color:var(--green);font-weight:500}
+.review-a .wrong{color:var(--red);text-decoration:line-through;margin-right:.4rem}
+
+.footer-note{text-align:center;padding:2rem 0;color:var(--text-dim);font-size:.7rem}
+
+/* SENT CONFIRMATION */
+.sent-badge{display:inline-flex;align-items:center;gap:.4rem;padding:.4rem .8rem;background:var(--green-glow);border:1px solid rgba(46,204,113,.3);border-radius:2rem;font-size:.75rem;color:var(--green);margin-top:.8rem}
+
+@media(max-width:600px){
+.container{padding:1rem}
+.header h1{font-size:1.3rem}
+.question-text{font-size:.9rem}
+.result-actions{flex-direction:column}
+}
+</style>
+</head>
+<body>
+
+<!-- TIMER BAR (hidden until quiz starts) -->
+<div class="timer-bar" id="timerBar" style="display:none">
+<div class="timer-inner">
+<div class="timer-text">⏱ <span id="timerDisplay">30:00</span></div>
+<div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+<div class="timer-text"><span id="answeredCount">0</span>/10</div>
+</div>
+</div>
+
+<div class="container">
+
+<!-- HEADER -->
+<div class="header">
+<div class="badge">Instituto Superior Tecnológico Quito</div>
+<h1>Prueba Parcial 1<br>Metodología de la Investigación</h1>
+<p>Animación Multimedia — 4to Nivel — Marzo 2026</p>
+<p class="inst">Docente: Daniel Domínguez Salvador</p>
+</div>
+
+<!-- SCREEN 1: INTRO -->
+<div class="screen active" id="screenIntro">
+<div class="intro-card">
+<h2>Instrucciones</h2>
+<ul>
+<li>La prueba contiene 10 preguntas de opción múltiple</li>
+<li>Cada pregunta tiene una sola respuesta correcta</li>
+<li>Dispones de 30 minutos para completar la prueba</li>
+<li>Las preguntas y opciones aparecerán en orden aleatorio</li>
+<li>Una vez enviada, no podrás modificar tus respuestas</li>
+<li>Al finalizar, envía tus resultados al docente</li>
+</ul>
+</div>
+<div class="input-group">
+<label>Nombre completo del estudiante</label>
+<input type="text" id="studentName" placeholder="Escribe tu nombre completo aquí..." autocomplete="name">
+</div>
+<button class="btn btn-primary" id="btnStart" disabled>Comenzar Prueba</button>
+</div>
+
+<!-- SCREEN 2: QUIZ -->
+<div class="screen" id="screenQuiz">
+<div id="questionsContainer"></div>
+<button class="btn btn-primary" id="btnSubmit" disabled>Enviar Prueba</button>
+</div>
+
+<!-- SCREEN 3: RESULTS -->
+<div class="screen" id="screenResults">
+<div class="result-card">
+<div class="score-circle">
+<div class="score-num" id="scoreNum">0</div>
+<div class="score-label">de 10</div>
+</div>
+<div class="score-msg" id="scoreMsg"></div>
+<div class="score-detail" id="scoreDetail"></div>
+<div id="sentConfirmation"></div>
+</div>
+<div class="result-actions">
+<button class="btn btn-whatsapp btn-sm" id="btnWhatsapp">📱 Enviar por WhatsApp</button>
+<button class="btn btn-secondary btn-sm" id="btnCopy">📋 Copiar resultados</button>
+</div>
+<h3 style="font-size:.9rem;margin:1.5rem 0 1rem;color:var(--text-muted)">Revisión de respuestas</h3>
+<div id="reviewContainer"></div>
+</div>
+
+<div class="footer-note">Metodología de la Investigación — Parcial 1 — ISTQ 2026</div>
+</div>
+
+<script>
+// ============ QUIZ DATA ============
+const QUIZ_DATA = [
+{q:"¿Cuál es la principal diferencia entre la investigación cotidiana y la investigación científica?",
+opts:["La investigación cotidiana no busca respuestas","La investigación científica es sistemática, rigurosa y reproducible","La investigación cotidiana es más confiable","No existe diferencia, ambas son iguales"],
+correct:1},
+{q:"Un estudiante de animación quiere medir cuántas horas de anime consumen los jóvenes de Quito. ¿Qué paradigma de investigación es más adecuado?",
+opts:["Interpretativo","Sociocrítico","Positivista (cuantitativo)","Artístico"],
+correct:2},
+{q:"¿Cuál de los siguientes es un ejemplo de método inductivo?",
+opts:["Partir de una teoría general y verificarla en un caso específico","Observar varios casos particulares y formular una regla general","Descomponer un fenómeno en sus partes","Manipular variables en un laboratorio"],
+correct:1},
+{q:"¿Qué criterio NO es relevante al seleccionar un tema de investigación?",
+opts:["Viabilidad","Relevancia","Popularidad en redes sociales","Interés personal"],
+correct:2},
+{q:"\"¿Cómo influye la paleta de colores del anime en la respuesta emocional de los espectadores?\" es un ejemplo de:",
+opts:["Hipótesis","Objetivo general","Pregunta de investigación","Conclusión"],
+correct:2},
+{q:"La delimitación temporal de una investigación se refiere a:",
+opts:["El lugar donde se realizará el estudio","El periodo de tiempo que abarcará la investigación","La cantidad de personas que participarán","El presupuesto disponible"],
+correct:1},
+{q:"¿Cuál de las siguientes NO es una característica de la investigación científica?",
+opts:["Sistemática","Empírica","Subjetiva y basada en opiniones personales","Replicable"],
+correct:2},
+{q:"Un investigador descompone un opening de anime en sus elementos (música, tipografía, animación, simbología) para analizarlos por separado. ¿Qué método está utilizando?",
+opts:["Inductivo","Deductivo","Analítico-sintético","Experimental"],
+correct:2},
+{q:"¿Cuál es el uso ético correcto de la IA en una investigación académica?",
+opts:["Copiar directamente los textos generados por la IA","Usar la IA para generar toda la investigación sin intervención","Usar la IA como herramienta de apoyo, verificando y reformulando en propias palabras","No usar IA bajo ninguna circunstancia"],
+correct:2},
+{q:"¿Cuál de los siguientes temas está MEJOR delimitado para una investigación?",
+opts:["\"El anime\"","\"La historia de la animación japonesa\"","\"Percepción de estudiantes universitarios de Quito sobre la representación femenina en anime shōnen (2020-2025)\"","\"Todo sobre el manga y anime\""],
+correct:2}
+];
+
+// ============ CONFIG ============
+const TEACHER_PHONE = ""; // <-- PONER NÚMERO DEL DOCENTE CON CÓDIGO DE PAÍS, ej: "593987654321"
+const QUIZ_MINUTES = 30;
+
+// ============ STATE ============
+let questions = [];
+let answers = {};
+let timerInterval = null;
+let secondsLeft = QUIZ_MINUTES * 60;
+let studentName = "";
+let finalScore = 0;
+let startTime = null;
+
+// ============ SHUFFLE ============
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function prepareQuestions() {
+  const shuffledQs = shuffle(QUIZ_DATA.map((q, i) => ({...q, originalIndex: i})));
+  questions = shuffledQs.map(q => {
+    const correctText = q.opts[q.correct];
+    const shuffledOpts = shuffle(q.opts);
+    const newCorrect = shuffledOpts.indexOf(correctText);
+    return { ...q, opts: shuffledOpts, correct: newCorrect };
+  });
+}
+
+// ============ RENDER ============
+function renderQuestions() {
+  const container = document.getElementById("questionsContainer");
+  container.innerHTML = questions.map((q, i) => `
+    <div class="question-card" id="qcard-${i}">
+      <div class="question-num">Pregunta ${i + 1} de 10</div>
+      <div class="question-text">${q.q}</div>
+      <div class="options">
+        ${q.opts.map((opt, j) => `
+          <label class="option" id="opt-${i}-${j}" onclick="selectOption(${i},${j})">
+            <input type="radio" name="q${i}" value="${j}">
+            <div class="radio"></div>
+            <span>${opt}</span>
+          </label>
+        `).join("")}
+      </div>
+    </div>
+  `).join("");
+}
+
+function selectOption(qi, oi) {
+  answers[qi] = oi;
+  // Update UI
+  document.querySelectorAll(`[id^="opt-${qi}-"]`).forEach(el => el.classList.remove("selected"));
+  document.getElementById(`opt-${qi}-${oi}`).classList.add("selected");
+  document.getElementById(`qcard-${qi}`).classList.add("answered");
+  // Update count
+  const count = Object.keys(answers).length;
+  document.getElementById("answeredCount").textContent = count;
+  document.getElementById("btnSubmit").disabled = count < 10;
+  // Update progress
+  document.getElementById("progressFill").style.width = `${(count / 10) * 100}%`;
+}
+
+// ============ TIMER ============
+function startTimer() {
+  startTime = new Date();
+  timerInterval = setInterval(() => {
+    secondsLeft--;
+    if (secondsLeft <= 0) {
+      clearInterval(timerInterval);
+      submitQuiz(true);
+      return;
+    }
+    const m = Math.floor(secondsLeft / 60);
+    const s = secondsLeft % 60;
+    const display = document.getElementById("timerDisplay");
+    display.textContent = `${m}:${s.toString().padStart(2, "0")}`;
+    if (secondsLeft <= 120) display.classList.add("warn");
+  }, 1000);
+}
+
+// ============ SCORING ============
+function calculateScore() {
+  let correct = 0;
+  questions.forEach((q, i) => {
+    if (answers[i] === q.correct) correct++;
+  });
+  return correct;
+}
+
+// ============ SUBMIT ============
+function submitQuiz(timeUp = false) {
+  if (!timeUp && !confirm("¿Estás seguro de enviar la prueba? No podrás modificar tus respuestas.")) return;
+  clearInterval(timerInterval);
+  document.getElementById("timerBar").style.display = "none";
+
+  finalScore = calculateScore();
+  const endTime = new Date();
+  const elapsed = Math.round((endTime - startTime) / 1000);
+  const elapsedMin = Math.floor(elapsed / 60);
+  const elapsedSec = elapsed % 60;
+
+  // Score screen
+  document.getElementById("scoreNum").textContent = finalScore;
+  const pct = finalScore * 10;
+  let msg = "", detail = "";
+  if (pct >= 90) { msg = "¡Excelente trabajo! 🎉"; detail = "Dominas los fundamentos de la investigación científica."; }
+  else if (pct >= 70) { msg = "¡Buen resultado! 👏"; detail = "Tienes una buena comprensión de los temas."; }
+  else if (pct >= 50) { msg = "Resultado aceptable 📚"; detail = "Hay temas que necesitas repasar."; }
+  else { msg = "Necesitas repasar 📖"; detail = "Te recomiendo revisar los materiales del parcial."; }
+  document.getElementById("scoreMsg").textContent = msg;
+  document.getElementById("scoreDetail").textContent = `${detail} (Tiempo: ${elapsedMin}m ${elapsedSec}s)`;
+
+  if (timeUp) {
+    document.getElementById("scoreDetail").textContent += " — Tiempo agotado";
+  }
+
+  // Review
+  const reviewContainer = document.getElementById("reviewContainer");
+  reviewContainer.innerHTML = questions.map((q, i) => {
+    const isCorrect = answers[i] === q.correct;
+    const studentAnswer = answers[i] !== undefined ? q.opts[answers[i]] : "Sin respuesta";
+    const correctAnswer = q.opts[q.correct];
+    return `
+      <div class="review-card ${isCorrect ? "correct" : "incorrect"}">
+        <div class="review-status ${isCorrect ? "correct" : "incorrect"}">${isCorrect ? "✓ Correcta" : "✗ Incorrecta"}</div>
+        <div class="review-q">${q.q}</div>
+        <div class="review-a">
+          ${isCorrect
+            ? `Tu respuesta: <span>${studentAnswer}</span>`
+            : `<span class="wrong">${studentAnswer}</span> → Correcta: <span>${correctAnswer}</span>`
+          }
+        </div>
+      </div>
+    `;
+  }).join("");
+
+  // Generate results text
+  window.resultsText = `PRUEBA PARCIAL 1 — Metodología de la Investigación\nEstudiante: ${studentName}\nCalificación: ${finalScore}/10 (${pct}%)\nTiempo: ${elapsedMin}m ${elapsedSec}s\nFecha: ${new Date().toLocaleString("es-EC")}\n\nDetalle:\n${questions.map((q, i) => {
+    const isCorrect = answers[i] === q.correct;
+    return `${i+1}. ${isCorrect ? "✓" : "✗"} ${q.q.substring(0,60)}...`;
+  }).join("\n")}`;
+
+  showScreen("screenResults");
+}
+
+// ============ SEND RESULTS ============
+function sendWhatsApp() {
+  const encoded = encodeURIComponent(window.resultsText);
+  const phone = TEACHER_PHONE;
+  const url = phone
+    ? `https://wa.me/${phone}?text=${encoded}`
+    : `https://wa.me/?text=${encoded}`;
+  window.open(url, "_blank");
+  document.getElementById("sentConfirmation").innerHTML = '<div class="sent-badge">✓ Abriendo WhatsApp...</div>';
+}
+
+function copyResults() {
+  navigator.clipboard.writeText(window.resultsText).then(() => {
+    document.getElementById("sentConfirmation").innerHTML = '<div class="sent-badge">✓ Resultados copiados al portapapeles</div>';
+  }).catch(() => {
+    // Fallback
+    const ta = document.createElement("textarea");
+    ta.value = window.resultsText;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand("copy");
+    document.body.removeChild(ta);
+    document.getElementById("sentConfirmation").innerHTML = '<div class="sent-badge">✓ Resultados copiados</div>';
+  });
+}
+
+// ============ NAVIGATION ============
+function showScreen(id) {
+  document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+  window.scrollTo({top: 0, behavior: "smooth"});
+}
+
+// ============ INIT ============
+document.getElementById("studentName").addEventListener("input", e => {
+  document.getElementById("btnStart").disabled = e.target.value.trim().length < 3;
+});
+
+document.getElementById("btnStart").addEventListener("click", () => {
+  studentName = document.getElementById("studentName").value.trim();
+  prepareQuestions();
+  renderQuestions();
+  showScreen("screenQuiz");
+  document.getElementById("timerBar").style.display = "block";
+  startTimer();
+});
+
+document.getElementById("btnSubmit").addEventListener("click", () => submitQuiz(false));
+document.getElementById("btnWhatsapp").addEventListener("click", sendWhatsApp);
+document.getElementById("btnCopy").addEventListener("click", copyResults);
+
+// Prevent accidental close
+window.addEventListener("beforeunload", e => {
+  if (document.getElementById("screenQuiz").classList.contains("active")) {
+    e.preventDefault();
+    e.returnValue = "";
+  }
+});
+</script>
+</body>
+</html>
